@@ -14,13 +14,13 @@
 html{scroll-behavior:smooth}
 body{font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--deep);color:var(--cream);line-height:1.6;overflow-x:hidden}
 h1,h2,h3{font-family:'Young Serif',Georgia,serif;font-weight:400;letter-spacing:-.01em}
-a{color:inherit}
+a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .w{max-width:1120px;margin:0 auto;padding:0 28px}
 section{padding:112px 0}
 header{position:fixed;inset:0 0 auto;z-index:9;background:rgba(15,42,34,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
 header .w{display:flex;align-items:center;justify-content:space-between;height:68px}
-.br{display:flex;align-items:center;gap:12px;font-family:'Young Serif',serif;font-size:20px;text-decoration:none}
+.br{display:flex;align-items:center;gap:12px;font-family:'Young Serif',serif;font-size:20px;line-height:1;text-decoration:none}
 .br img{width:36px;height:36px;border-radius:5px}
 nav{display:flex;align-items:center;gap:28px;font-size:15px}
 nav a{color:var(--mute);text-decoration:none}
@@ -99,12 +99,12 @@ nav a:not(.btn){display:none}
 </head>
 <body>
 <header><div class="w">
-<a class="br" href="#top"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAAAFzIMwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJ0UkGAAAAAFAAAAC0xvjaAAAAJ0lEQVR4n2MABQAAABJ5jjoQAAAABJRU5ErkJggg==" alt="N"><span>Noorvera Financials</span></a>
+<a class="br" href="index.html"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAAAFzIMwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJ0UkGAAAAAFAAAAC0xvjaAAAAJ0lEQVR4n2MABQAAABJ5jjoQAAAABJRU5ErkJggg==" alt="N"><span>Noorvera Financials</span></a>
 <nav>
-<a href="#fix">What we fix</a>
-<a href="#how">How it works</a>
+<a href="index.html#fix">What we fix</a>
+<a href="index.html#how">How it works</a>
 <a href="about.html">About</a>
-<a href="#contact" class="btn">Start a review</a>
+<a href="index.html#contact" class="btn">Start a review</a>
 </nav>
 </div></header>
 
@@ -183,4 +183,3 @@ fetch(FORM_URL,{method:'POST',body:d,headers:{Accept:'application/json'}}).then(
 </script>
 </body>
 </html>
-
