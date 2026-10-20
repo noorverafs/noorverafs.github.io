@@ -18,6 +18,7 @@
       --text: #f1ebdf;
       --muted: rgba(241,235,223,0.76);
       --panel: rgba(255,255,255,0.04);
+      --shadow: rgba(0,0,0,0.24);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,6 +39,9 @@
       padding: 0 24px;
       border-radius: 999px;
       font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
     }
     .btn-primary {
       background: var(--gold);
@@ -152,6 +156,71 @@
       margin-top: 6px;
     }
 
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 16, 15, 0.7);
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal.is-open {
+      display: flex;
+    }
+    .modal-panel {
+      width: min(560px, 100%);
+      background: #112f2d;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 28px 22px 22px;
+      box-shadow: 0 30px 70px var(--shadow);
+      position: relative;
+    }
+    .close-btn {
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      font-size: 1.15rem;
+    }
+    .modal-panel h3 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+    form { display: flex; flex-direction: column; gap: 18px; }
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    input, textarea {
+      width: 100%;
+      margin-top: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 12px 14px;
+      font: inherit;
+    }
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .status {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
     footer {
       padding: 28px 0 40px;
       border-top: 1px solid var(--line);
@@ -177,7 +246,7 @@
       <nav class="nav-links">
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
-        <a href="mailto:noorverafinancialservices@gmail.com" class="btn btn-primary">Start a review</a>
+        <button type="button" class="btn btn-primary" id="open-contact">Start a review</button>
       </nav>
     </div>
   </header>
@@ -239,15 +308,99 @@
             <h3>Need a clearer view of your books?</h3>
             <p>Let’s review the numbers and help you make decisions with confidence.</p>
           </div>
-          <a href="mailto:noorverafinancialservices@gmail.com" class="btn btn-primary">Get in touch</a>
+          <button type="button" class="btn btn-primary" id="open-contact-cta">Get in touch</button>
         </div>
       </div>
     </section>
   </main>
 
+  <div class="modal" id="contact-modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+      <button type="button" class="close-btn" id="close-contact" aria-label="Close form">×</button>
+      <h3 id="contact-title">Send a message</h3>
+      <form id="about-contact-form">
+        <div>
+          <label for="name">Name
+            <input id="name" name="name" type="text" required />
+          </label>
+        </div>
+        <div>
+          <label for="email">Email
+            <input id="email" name="email" type="email" required />
+          </label>
+        </div>
+        <div>
+          <label for="message">Message
+            <textarea id="message" name="message" required></textarea>
+          </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Send message</button>
+        <p class="status" id="contact-status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
   <footer>
     <div class="container">© 2026 Noorvera Financials</div>
   </footer>
+
+  <script>
+    const modal = document.getElementById('contact-modal');
+    const openButtons = [document.getElementById('open-contact'), document.getElementById('open-contact-cta')];
+    const closeButton = document.getElementById('close-contact');
+    const form = document.getElementById('about-contact-form');
+    const status = document.getElementById('contact-status');
+
+    function toggleModal(open) {
+      modal.classList.toggle('is-open', open);
+      modal.setAttribute('aria-hidden', String(!open));
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        const firstInput = form.querySelector('input');
+        setTimeout(() => firstInput && firstInput.focus(), 50);
+      }
+    }
+
+    openButtons.forEach(button => {
+      button.addEventListener('click', () => toggleModal(true));
+    });
+
+    closeButton.addEventListener('click', () => toggleModal(false));
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) toggleModal(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('is-open')) {
+        toggleModal(false);
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      status.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('https://formspree.io/f/mbgdeagj', {
+          method: 'POST',
+          body: formData,
+          headers: { Accept: 'application/json' }
+        });
+
+        if (!response.ok) throw new Error('Request failed');
+
+        form.reset();
+        status.textContent = 'Thank you. Your message has been sent.';
+        setTimeout(() => toggleModal(false), 1200);
+      } catch (error) {
+        status.textContent = 'Please send your message directly to: noorverafinancialservices@gmail.com';
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const message = formData.get('message');
+        window.location.href = 'mailto:noorverafinancialservices@gmail.com?subject=' + encodeURIComponent('Review request from ' + name) + '&body=' + encodeURIComponent(message + '\n\nReply to: ' + email);
+      }
+    });
+  </script>
 </body>
 </html>
-
